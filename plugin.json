@@ -1,0 +1,19 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "upwork-agent-plugin",
+  "version": "0.1.0",
+  "description": "Connects agents to Upwork and provides guided workflows for hiring and finding work.",
+  "author": {
+    "name": "Upwork",
+    "url": "https://www.upwork.com/"
+  },
+  "homepage": "https://www.upwork.com/ai/mcp",
+  "repository": "https://github.com/upwork/upwork-agent-plugin",
+  "keywords": [
+    "upwork",
+    "freelance",
+    "hiring",
+    "jobs",
+    "mcp"
+  ]
+}

@@ -1,0 +1,48 @@
+name: Validate plugin
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install Agent Skills validator
+        run: python -m pip install skills-ref==0.1.1
+
+      - name: Validate Agent Skills
+        run: |
+          for skill in skills/*/; do
+            echo "Validating ${skill}"
+            agentskills validate "$(pwd)/${skill%/}"
+          done
+
+      - name: Download Agent Plugins schemas
+        run: |
+          curl -fsS https://agent-plugins.org/schemas/1.0.0/plugin.schema.json \
+            -o /tmp/agent-plugin.schema.json
+          curl -fsS https://agent-plugins.org/schemas/1.0.0/mcp.schema.json \
+            -o /tmp/agent-plugin-mcp.schema.json
+
+      - name: Validate Agent Plugins manifests
+        run: |
+          npx --yes ajv-cli@5.0.0 validate --spec=draft2020 \
+            -s /tmp/agent-plugin.schema.json \
+            -d plugin.json
+          npx --yes ajv-cli@5.0.0 validate --spec=draft2020 \
+            -s /tmp/agent-plugin-mcp.schema.json \
+            -d mcp.json
