@@ -65,20 +65,25 @@ Read each field's description from `get_tool_help` for which form it wants, rath
 
 ## Protect writes
 
-- Treat any tool with `read_only=false` as write-capable. Show the exact action and get explicit user confirmation before each one. Confirm each write separately, even if the user says to approve everything.
-- Draft-confirm tools return a preview plus a `draft_id` and do not perform the marketplace action. Present the full preview, especially amounts, dates, limits, visibility, recipients, and attachments, then get a second explicit approval and call `confirm_draft` with action `confirm`, the `type` the draft returned, and the returned `draft_id`. Never rebuild or edit stored confirmation parameters.
-- `update_draft` invalidates the previous `draft_id`. Present the revised preview and get fresh approval before confirming the new one. `get_draft` reads a pending draft without consuming it.
+- Treat any tool with `read_only=false` as write-capable. Show the exact action and get explicit user confirmation before each one. Confirm each write separately, even if the user says to approve everything. A user can relax this for a specific tool with `set_tool_permission` (`always_allow`, search/execute mode only); do so only at their explicit request, and note that it never bypasses the separate `confirm_draft` step.
+- Draft-confirm tools return a preview plus a `preview_id` and do not perform the marketplace action. Present the full preview, especially amounts, dates, limits, visibility, recipients, and attachments, then get a second explicit approval and call `confirm_draft` with action `confirm`, the `type` the preview returned, and the returned `preview_id`. Never rebuild or edit stored confirmation parameters.
+- A preview is short-lived; the response reports `expires_at` and `ttl_seconds`. If it has expired, run the creating action again rather than confirming a stale id.
+- Only one pending preview is held per action type. There is no edit-in-place tool: to change anything, call the creating action again with the corrected values. The new preview supersedes the old one (`supersedes_previous_preview: true`) and the previous `preview_id` becomes invalid, so present the revised preview and get fresh approval before confirming it. Never start a second change of the same type while the user is still deciding on the first. `get_draft` reads a pending preview without consuming it.
+- `confirm_draft` never accepts an offer. A freelancer's `respond_to_offer` decline and request-changes are previews; accept is binding and returns a `finalize_url`.
 - Other write tools execute on a single confirmed call, with no draft step.
 - Money movement and legally binding steps are never completed by this server. They return `status: action_required` and a `finalize_url` the user must open on Upwork. Treat this as a category: if an action would move money or bind a party, expect a link. Check for `finalize_url` before claiming any write succeeded, present it, and say what remains to be done. Reversible changes, such as pausing or ending a contract or declining an offer, do run through the server as normal drafts.
 - Use the exact amounts and terms the user stated. Never substitute a market rate or a plausible-looking default.
 
 ## Upload files
 
-An upload is a short-lived session, not a direct transfer. Start the upload, poll its status with the returned task id until it reports `ok`, then pass the resulting file identifiers to the tool that consumes them.
+An upload is a short-lived session, not a direct transfer. The session expires 30 minutes after it is created; keep the returned `task_id`, and if the user has not finished by then start a new upload rather than confirming against the expired one.
 
-Every upload requires an explicit context naming which backend it belongs to, such as a job posting, a proposal, an offer, a milestone, or a message room. The server will not infer it, and a misfiled attachment does not appear where the user expects. If the user has not made the context unambiguous, ask. A message-room upload additionally needs the room id.
+1. Call `start_attachment_upload` with an explicit `context`. Every upload requires one, naming which backend it belongs to: `job` for a posting, `proposals` for an application, `invitation` when a freelancer accepts a client invitation, `offer`, `milestones`, or `messages` for a room. The server will not infer it, and a misfiled attachment does not appear where the user expects. If the user has not made the context unambiguous, ask. A `messages` upload additionally needs the `room_id`.
+2. Poll `get_upload_status` action `get` with the `task_id` until it reports `ok`. It returns `file_uid` values and metadata, never file content.
+3. Files submitted through the inline upload UI are stored immediately and must **not** be confirmed. Files submitted through the returned `fallback_url` must be retained with `confirm_attachment_upload`, passing the same `context`, the `task_id`, and only the `file_uid` values the status call reported as done. Confirm promptly, within the same 30-minute window.
+4. Pass the `file_uid` values to the tool that consumes them.
 
-Never ask the user for a local file path or base64 text. The inline upload UI takes small files; the returned fallback URL page accepts much larger ones, so direct big files there.
+Never ask the user for a local file path or base64 text. The inline upload UI takes small files; the `fallback_url` page accepts much larger ones, so direct big files there.
 
 ## Handle results
 
