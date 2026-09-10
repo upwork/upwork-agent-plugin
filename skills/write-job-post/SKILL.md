@@ -50,7 +50,7 @@ Call `list_accounts` and choose an account whose raw `role` is `CLIENT`. Job pos
 
 ## After publishing
 
-- To collect applicants, get the posting id from `get_job_posting`, then list that posting's proposals with `list_client_proposals`, which can also span every posting at once.
+- To collect applicants, get the posting id from `get_job_posting`, then list that posting's proposals with `list_client_proposals` action `list`, or use action `list_all` to span every posting at once.
 - To invite freelancers, use `find_freelancers` and then `invite_freelancer`. Invitations require the freelancer's numeric person id, not their profile key.
 - To change a live posting, call `post_job` action `update` with the posting id and only the fields to change, then confirm the returned draft. Screening questions can be replaced or explicitly cleared; omitting them leaves them unchanged.
 - To take a posting down, first read the posting and confirm its status still allows removal. If it does not, tell the client the job cannot be removed and stop. When it does, call `post_job` action `close_reasons`, present every returned reason, ask which applies, and pass the client's choice to action `close`. Never pick the reason for them.
