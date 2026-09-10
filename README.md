@@ -1,7 +1,7 @@
 # Upwork Agent Plugin
 
-Portable agent workflows for hiring and finding work on Upwork, backed by the
-[Upwork MCP server](https://mcp.upwork.com/mcp).
+Portable agent workflows for hiring and finding work on Upwork. Learn more on
+the [Upwork MCP site](https://www.upwork.com/ai/mcp).
 
 This repository follows the
 [Agent Plugins specification v1.0.0](https://agent-plugins.org/specification).
@@ -23,9 +23,58 @@ Skills from immediate subdirectories of `skills/`.
 
 ## Install
 
-Install this repository with any client that supports the portable Agent
-Plugins format. The client is responsible for Upwork authentication and
-authorization; the plugin does not contain credentials.
+### npx skills — recommended for any Agent Skills host
+
+Install the skills in this repository with the open-source
+[Skills CLI](https://github.com/vercel-labs/skills). It supports Claude Code,
+Cursor, Codex, and many other Agent Skills hosts:
+
+```bash
+npx skills add https://github.com/upwork/upwork-agent-plugin
+```
+
+The installer finds all four skills and prompts for which ones to install,
+which agents to configure, and whether to use project or global scope.
+
+### Claude Code
+
+```bash
+/plugin marketplace add upwork/upwork-agent-plugin
+
+/plugin install upwork-agent-plugin@upwork
+```
+
+The plugin installation includes the skills and the Upwork MCP server
+declaration. Complete the browser-based authorization flow when prompted.
+
+### Codex
+
+```bash
+codex plugin marketplace add upwork/upwork-agent-plugin
+
+codex plugin add upwork-agent-plugin@upwork
+```
+
+Alternatively, run `codex`, open `/plugins`, select **Upwork**, and install
+`upwork-agent-plugin` interactively.
+
+### Other Agent Plugin-compatible clients
+
+Add this repository URL in the client's plugin installer:
+
+```text
+https://github.com/upwork/upwork-agent-plugin
+```
+
+Compatible clients discover `plugin.json`, `mcp.json`, and every skill under
+`skills/`.
+
+The root files are the portable Agent Plugins package. The `.claude-plugin`
+and `.agents` directories provide client-specific marketplace compatibility.
+
+> The Skills CLI installs the Agent Skills from this repository. On hosts that
+> do not yet support the complete Agent Plugins format, MCP connector setup
+> remains a separate client step.
 
 After installation, ask the agent to connect to Upwork and describe the task,
 for example:
@@ -41,6 +90,10 @@ workflows require a second confirmation before the final marketplace action.
 
 ```text
 .
+├── .agents/plugins/marketplace.json
+├── .claude-plugin/
+│   ├── marketplace.json
+│   └── plugin.json
 ├── plugin.json
 ├── mcp.json
 └── skills/

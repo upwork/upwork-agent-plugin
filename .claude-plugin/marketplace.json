@@ -1,0 +1,29 @@
+{
+  "name": "upwork",
+  "owner": {
+    "name": "Upwork",
+    "url": "https://www.upwork.com/"
+  },
+  "version": "0.1.0",
+  "metadata": {
+    "description": "Official Upwork Agent Plugin for hiring and finding work through the Upwork MCP server.",
+    "repository": "https://github.com/upwork/upwork-agent-plugin",
+    "license": "Apache-2.0"
+  },
+  "plugins": [
+    {
+      "name": "upwork-agent-plugin",
+      "source": "./",
+      "description": "Connects agents to Upwork and provides guided workflows for hiring and finding work.",
+      "category": "productivity",
+      "keywords": [
+        "upwork",
+        "freelance",
+        "hiring",
+        "jobs",
+        "mcp"
+      ],
+      "version": "0.1.0"
+    }
+  ]
+}
