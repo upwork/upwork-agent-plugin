@@ -54,7 +54,7 @@ Proceed only after the client chooses. The choice determines how the offer's sou
 1. Check the proposal's status first. An offer cannot be created when a pending or draft offer already exists, and a proposal already showing as offered means one does.
 2. Confirm the terms with the client explicitly: title, description, fixed-price milestones or hourly rate, weekly hour limit, whether manual time is allowed, and start and end dates. Use their exact amounts. Never supply a market rate or a plausible-looking default.
 3. Call `manage_offers` action `create_draft`. Read its required fields from `get_tool_help`; the freelancer's organization can be resolved from their profile key, but pass the organization directly when the freelancer belongs to several and the right one is known.
-4. To attach files, start an upload in the offer context, poll its status until ready, and pass the resulting file identifiers.
+4. To attach files, start an upload in the `offer` context, poll its status until ready, confirm it with `confirm_attachment_upload` if it came through the fallback URL, and pass the resulting `file_uid` values.
 5. The response returns a `finalize_url`. **The offer has not been sent.** The client must open that link on Upwork to review, fund, and send it. Present the link, say plainly what remains to be done, and never confirm an offer as a draft or claim it went out.
 6. Track and withdraw offers through `manage_offers` or `list_offers`. Withdrawing needs confirmation like any other write.
 
@@ -76,6 +76,6 @@ Reversible changes do run through the server as normal drafts, including pausing
 - Compare candidates on evidence the tools returned. Never invent rates, availability, ratings, or work history.
 - Reproduce candidate names and job titles verbatim so the same person or posting keeps the same name throughout the conversation.
 - Prefer any `*_label` field over a raw enum or numeric code when presenting results.
-- Never show `org_uid`, `personId`, `profile_key`, or `draft_id` unless the client asks. Share `trace_id` when something fails.
+- Never show `org_uid`, `personId`, `profile_key`, or `preview_id` unless the client asks. Share `trace_id` when something fails.
 
 In compact tool mode, discover schemas with `search_tools` and `get_tool_help`, then call tools through `execute_tool` with the selected `org_uid` and `role`.
