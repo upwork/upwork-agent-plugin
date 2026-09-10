@@ -1,0 +1,22 @@
+{
+  "name": "upwork-agent-plugin",
+  "displayName": "Upwork Agent Plugin",
+  "version": "0.1.0",
+  "description": "Connects agents to Upwork and provides guided workflows for hiring and finding work.",
+  "author": {
+    "name": "Upwork",
+    "url": "https://www.upwork.com/"
+  },
+  "homepage": "https://www.upwork.com/ai/mcp",
+  "repository": "https://github.com/upwork/upwork-agent-plugin",
+  "license": "Apache-2.0",
+  "keywords": [
+    "upwork",
+    "freelance",
+    "hiring",
+    "jobs",
+    "mcp"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./mcp.json"
+}

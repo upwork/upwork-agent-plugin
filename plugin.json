@@ -16,5 +16,28 @@
     "hiring",
     "jobs",
     "mcp"
-  ]
+  ],
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "Upwork Agent Plugin",
+        "shortDescription": "Hire and find work on Upwork",
+        "longDescription": "Connect agents to Upwork and guide them through account selection, job posts, proposals, hiring, and other multi-step workflows.",
+        "developerName": "Upwork",
+        "category": "Productivity",
+        "capabilities": [
+          "Interactive",
+          "Read",
+          "Write"
+        ],
+        "websiteURL": "https://www.upwork.com/ai/mcp",
+        "defaultPrompt": [
+          "Help me turn this project brief into an Upwork job post.",
+          "Write a proposal for this Upwork job using my real work history.",
+          "Help me find and hire a freelancer on Upwork."
+        ],
+        "brandColor": "#108A00"
+      }
+    }
+  }
 }
