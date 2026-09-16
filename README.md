@@ -58,6 +58,22 @@ codex plugin add upwork-agent-plugin@upwork
 Alternatively, run `codex`, open `/plugins`, select **Upwork**, and install
 `upwork-agent-plugin` interactively.
 
+### Antigravity
+
+```bash
+# Antigravity CLI (global):
+git clone https://github.com/upwork/upwork-agent-plugin \
+  ~/.gemini/antigravity-cli/plugins/upwork-agent-plugin
+
+# Antigravity 2.0 / IDE (global):
+git clone https://github.com/upwork/upwork-agent-plugin \
+  ~/.gemini/config/plugins/upwork-agent-plugin
+
+# OR workspace-level (either version) — clone into your project instead:
+git clone https://github.com/upwork/upwork-agent-plugin \
+  <your-project>/.agents/plugins/upwork-agent-plugin
+```
+
 ### Other Agent Plugin-compatible clients
 
 Add this repository URL in the client's plugin installer:
@@ -96,6 +112,7 @@ workflows require a second confirmation before the final marketplace action.
 │   └── plugin.json
 ├── plugin.json
 ├── mcp.json
+├── mcp_config.json
 └── skills/
     ├── hire-on-upwork/
     │   └── SKILL.md
