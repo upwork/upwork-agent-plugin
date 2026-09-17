@@ -62,10 +62,9 @@ Alternatively, run `codex`, open `/plugins`, select **Upwork**, and install
 
 ```bash
 # Antigravity CLI (global):
-git clone https://github.com/upwork/upwork-agent-plugin \
-  ~/.gemini/antigravity-cli/plugins/upwork-agent-plugin
+agy plugin install https://github.com/upwork/upwork-agent-plugin
 
-# Antigravity 2.0 / IDE (global):
+# Antigravity 2.0 / IDE (global) - if you don't have Antigravity CLI installed:
 git clone https://github.com/upwork/upwork-agent-plugin \
   ~/.gemini/config/plugins/upwork-agent-plugin
 
