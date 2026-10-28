@@ -4,7 +4,7 @@ description: Orchestrates reliable multi-step workflows with the Upwork MCP serv
 compatibility: Requires the Upwork MCP server with toolset version 1.0 or later and an authenticated Upwork account.
 metadata:
   author: Upwork
-  version: "0.3.0"
+  version: "0.3.1"
 ---
 
 # Orchestrate Upwork MCP workflows
@@ -42,7 +42,7 @@ Messaging, offers, contracts, account details, and file uploads are available to
 
 Read current state first so an action is never stale or duplicated. Confirm the exact actions with `get_tool_help`; what matters here is the order.
 
-- Post a job: first list saved drafts and ask whether to continue one or start a new post. Get rate insights for an hourly budget, prepare the new-post preview, confirm it to save a real draft, and publish only through a separately approved `post_job` update with `status: published`. Renewing a live post is a separate preview, `post_job` action `renew` confirmed as type `job_renew`: 24 hours after posting or the last renewal, three renewals in total, and it cannot be undone. A `not_eligible` response has no preview.
+- Post a job: first list saved drafts and ask whether to continue one or start a new post. Get rate insights for an hourly budget and obtain an explicit visibility choice. After approval, `post_job` action `create_draft` saves a real draft immediately; present `job_posting.preview_text` and do not call `confirm_preview`. Edit that saved draft with `update`. Publish only through a separately approved `update` with `status: published`, followed by `confirm_preview`. Renewing a live post is a separate preview, `post_job` action `renew` confirmed as type `job_renew`: 24 hours after posting or the last renewal, three renewals in total, and it cannot be undone. A `not_eligible` response has no preview.
 - Review applicants: get the owning posting's id from the client's own postings list first, then list that posting's proposals. A marketplace job id will not work here.
 - Hire: ask whether the user wants a direct offer or an invitation first, then act. Never infer which from the fact that you already hold the freelancer's ids.
 - Apply to a job: read the job, then rule out an existing invitation *and* an existing proposal, then gather profile evidence, then draft, then confirm. Answer an invitation through its own accept or decline action rather than a fresh application, which Upwork rejects as a duplicate.
@@ -63,8 +63,8 @@ Search results hand you the ciphertext, while anything that *acts* on an entity 
 
 - Treat any tool with `read_only=false` as write-capable. Show the exact action and get explicit confirmation before each one, even if the user says to approve everything. A user can relax this for a specific tool with `set_tool_permission` (`always_allow`, search/execute mode only); do so only at their explicit request. It never bypasses `confirm_preview`.
 - Preview-confirm tools return a preview and a `preview_id` and do not perform the marketplace action. Present every field of the preview, get a second explicit approval, then call `confirm_preview` with action `confirm`, the `type` the preview returned, and the returned `preview_id`. Never rebuild or edit stored confirmation parameters. `confirm_draft` and `get_draft` are deprecated aliases of `confirm_preview` and `get_preview`.
-- There is no edit-in-place tool: to change anything, or if the preview expired, call the creating action again, present the complete new preview, and get fresh approval. Never start a second change of the same preview type while the user is still deciding on the first.
-- `post_job` action `create_draft` confirmed as `job_posting` saves a real **DRAFT** and never publishes. Publishing is a separate `post_job` action `update` with `status: published`, confirmed as `job_update`, and returns a new `job_id`.
+- To change an unconfirmed preview, or replace one that expired, call its creating action again, present the complete replacement preview, and get fresh approval. Never start a second change of the same preview type while the user is still deciding on the first. This rule is about pending previews, not saved records: edit a saved job-post draft with `post_job` action `update`.
+- `post_job` action `create_draft` is the exception to preview-confirm: after explicit approval, it immediately saves a real **DRAFT**, returns `job_posting.preview_text`, and never publishes. It has no pending preview to confirm. If its result is ambiguous, list saved drafts before retrying because another successful call creates another draft and consumes another posting-limit slot. Publishing is a separate `post_job` action `update` with `status: published`, confirmed as `job_update`, and returns a new `job_id`.
 - `confirm_preview` never accepts an offer. A freelancer's `respond_to_offer` decline and request-changes are previews; accept is binding and returns a `finalize_url`.
 - Money movement and legally binding steps are never completed by this server. They return `status: action_required` and a `finalize_url` the user must open on Upwork. Check for `finalize_url` before claiming any write succeeded, present it, and say what remains to be done. Reversible changes, such as pausing or ending a contract or declining an offer, run through the server as normal drafts.
 - Other write tools execute on a single confirmed call, with no draft step.
